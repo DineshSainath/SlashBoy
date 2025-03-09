@@ -1,0 +1,600 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #121212;
+  color: #fff;
+  overflow: hidden;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  z-index: 10;
+}
+
+.score-container {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff4757;
+  text-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+}
+
+.life-container {
+  display: flex;
+  align-items: center;
+}
+
+.life-bar {
+  width: 150px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #333;
+}
+
+#life-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #ff4757, #ff6b81);
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+#game-area {
+  width: 100%;
+  height: calc(100vh - 120px);
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  /* Modern hallway background with perspective */
+  background-image: linear-gradient(
+    to bottom,
+    #1e1e2f 0%,
+    #2d2d44 40%,
+    #3c3c5a 60%,
+    #4a4a6b 100%
+  );
+  border: none;
+}
+
+/* Floor with perspective effect */
+#game-area::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: repeating-linear-gradient(
+    90deg,
+    #333355 0px,
+    #333355 100px,
+    #3a3a60 100px,
+    #3a3a60 200px
+  );
+  transform: perspective(300px) rotateX(30deg);
+  transform-origin: bottom;
+  z-index: 1;
+}
+
+/* Side walls with light strips */
+#game-area::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      to bottom,
+      transparent 60%,
+      rgba(0, 0, 0, 0.4) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(0, 200, 255, 0.1) 0%,
+      transparent 5%,
+      transparent 95%,
+      rgba(0, 200, 255, 0.1) 100%
+    );
+  pointer-events: none;
+  z-index: 2;
+}
+
+#player {
+  width: 50px;
+  height: 80px;
+  position: absolute;
+  bottom: 0;
+  left: 50px;
+  z-index: 5;
+  /* Remove the previous styling */
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hero character with cyberpunk style */
+#player::before {
+  content: "";
+  width: 25px;
+  height: 25px;
+  background-color: #00e5ff;
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 0 15px #00e5ff;
+  position: relative;
+  z-index: 6;
+}
+
+#player::after {
+  content: "";
+  width: 40px;
+  height: 55px;
+  background: linear-gradient(to bottom, #2980b9 0%, #3498db 100%);
+  border-radius: 10px 10px 0 0;
+  position: relative;
+  z-index: 5;
+  /* Add neon outline */
+  box-shadow: 0 0 10px #00e5ff, inset 0 0 5px rgba(0, 229, 255, 0.5);
+}
+
+.enemy {
+  width: 45px;
+  height: 75px;
+  position: absolute;
+  bottom: 0;
+  z-index: 5;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Menacing enemy design */
+.enemy::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background-color: #ff4757;
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 0 10px #ff4757;
+  position: relative;
+  z-index: 6;
+}
+
+.enemy::after {
+  content: "";
+  width: 35px;
+  height: 50px;
+  background: linear-gradient(to bottom, #c0392b 0%, #e74c3c 100%);
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  z-index: 5;
+  /* Add evil glow */
+  box-shadow: 0 0 10px #ff4757, inset 0 0 5px rgba(255, 71, 87, 0.5);
+}
+
+/* Improved attack animation */
+.attack-animation {
+  animation: attack 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes attack {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  10% {
+    transform: translateX(-5px) rotate(-5deg);
+  }
+  50% {
+    transform: translateX(30px) rotate(5deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+/* Energy blast for attack */
+.energy-blast {
+  position: absolute;
+  width: 40px;
+  height: 15px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 229, 255, 0.8),
+    rgba(0, 229, 255, 0.2)
+  );
+  border-radius: 15px;
+  z-index: 4;
+  box-shadow: 0 0 15px #00e5ff;
+  animation: blast 0.3s linear forwards;
+}
+
+@keyframes blast {
+  0% {
+    width: 0;
+    opacity: 0.8;
+  }
+  100% {
+    width: 80px;
+    opacity: 0;
+  }
+}
+
+.hit {
+  animation: hit-effect 0.5s ease-out;
+  opacity: 0.7;
+}
+
+@keyframes hit-effect {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.2);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scale(0.8);
+    filter: brightness(0.7);
+  }
+}
+
+.hit::before,
+.hit::after {
+  background-color: #666;
+  box-shadow: none;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+#start-button {
+  padding: 12px 25px;
+  font-size: 20px;
+  background: linear-gradient(to right, #00e5ff, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+  transition: all 0.3s ease;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin: 15px 0;
+  z-index: 10;
+}
+
+#start-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.7);
+}
+
+.movement-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.movement-controls button {
+  padding: 12px 25px;
+  font-size: 20px;
+  background: linear-gradient(to bottom, #2980b9, #3498db);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.movement-controls button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
+}
+
+#attack-button {
+  background: linear-gradient(to bottom, #c0392b, #e74c3c);
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+#attack-button:hover {
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+}
+
+/* Game over overlay */
+.game-over {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+}
+
+.game-over h2 {
+  color: #ff4757;
+  text-shadow: 0 0 10px rgba(255, 71, 87, 0.7);
+  margin-bottom: 20px;
+  font-size: 48px;
+}
+
+.game-over p {
+  color: #00e5ff;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+  font-size: 36px;
+}
+
+/* Social sharing buttons */
+.social-share {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-button {
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.twitter-share {
+  background-color: #1da1f2;
+}
+
+.instagram-share {
+  background: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+}
+
+.tiktok-share {
+  background: linear-gradient(45deg, #000000 0%, #25f4ee 50%, #fe2c55 100%);
+}
+
+.social-button:hover {
+  transform: scale(1.1);
+}
+
+/* AI badge for viral appeal */
+.ai-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(45deg, #00e5ff, #2980b9);
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+/* Combo counter for viral gameplay */
+.combo-counter {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00e5ff;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.combo-counter.active {
+  opacity: 1;
+}
+
+/* Game instructions */
+.instructions {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  z-index: 10;
+  text-align: right;
+}
+
+.instructions p {
+  margin: 5px 0;
+  color: #fff;
+}
+
+.instructions i {
+  margin: 0 3px;
+  color: #00e5ff;
+}
+
+/* Hide mobile instructions on desktop */
+.mobile-only {
+  display: none;
+}
+
+/* Damage indicator */
+.damage-flash {
+  animation: damage-flash 0.3s ease-out;
+}
+
+@keyframes damage-flash {
+  0% {
+    box-shadow: inset 0 0 0 2000px rgba(255, 0, 0, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 0 2000px rgba(255, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: inset 0 0 0 2000px rgba(255, 0, 0, 0);
+  }
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  #game-area {
+    height: calc(100vh - 100px);
+  }
+
+  .instructions {
+    font-size: 14px;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .life-bar {
+    width: 120px;
+    height: 15px;
+  }
+
+  /* Show mobile instructions on mobile */
+  .mobile-only {
+    display: block;
+  }
+}
+
+@media (max-height: 600px) {
+  .hud {
+    padding: 5px 15px;
+  }
+
+  .score-container {
+    font-size: 20px;
+  }
+
+  #start-button {
+    padding: 8px 20px;
+    font-size: 16px;
+    margin: 10px 0;
+  }
+}
+
+/* Debug controls */
+.debug-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  z-index: 10;
+  color: #fff;
+}
+
+.debug-controls span {
+  opacity: 0.5;
+  margin: 0 3px;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.debug-controls span.active {
+  opacity: 1;
+  color: #00e5ff;
+}
+
+.game-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+  gap: 15px;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.control-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(to bottom, #2980b9, #3498db);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover,
+.control-btn:active {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
+}
+
+#attack-button {
+  background: linear-gradient(to bottom, #c0392b, #e74c3c);
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+  width: 80px;
+  height: 80px;
+}
+
+#attack-button:hover,
+#attack-button:active {
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+}

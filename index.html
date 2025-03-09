@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SlashBoy</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="hud">
+        <div class="score-container">Score: <span id="score">0</span></div>
+        <div class="life-container">
+          <div class="life-bar">
+            <div id="life-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div id="game-area">
+        <div class="combo-counter" id="combo-counter">
+          Combo: <span id="combo-value">0</span>x
+        </div>
+        <div id="player"></div>
+        <div class="instructions">
+          <p>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-right"></i> Move
+          </p>
+          <p><i class="fas fa-keyboard"></i> Space to Attack</p>
+          <p class="mobile-only">
+            <i class="fas fa-hand-pointer"></i> Tap sides to move
+          </p>
+          <p class="mobile-only">
+            <i class="fas fa-hand-pointer"></i> Double-tap to attack
+          </p>
+        </div>
+        <div id="debug-controls" class="debug-controls">
+          Controls: <span id="debug-left">◀</span>
+          <span id="debug-right">▶</span> <span id="debug-attack">⚡</span>
+        </div>
+      </div>
+      <div class="game-controls">
+        <button id="start-button">Start Game</button>
+        <div class="control-buttons">
+          <button id="left-button" class="control-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <button id="attack-button" class="control-btn">
+            <i class="fas fa-bolt"></i>
+          </button>
+          <button id="right-button" class="control-btn">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="game.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "slashboy",
+  "version": "1.0.0",
+  "description": "A cyberpunk-themed arcade game where you play as SlashBoy",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "web",
+    "html5",
+    "javascript",
+    "cyberpunk",
+    "arcade",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
